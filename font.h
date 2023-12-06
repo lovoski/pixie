@@ -16,6 +16,8 @@ namespace Pixie
 
             // Loads the font in the given BMP filename using the specified character size.
             bool Load(const char* filename, int characterSizeX, int characterSizeY);
+            // Loads the default font from memory using the hard coded array
+            bool LoadDefaultFont();
 
             // Draws the specified font to the window in the font colour.
             void Draw(const char* msg, int x, int y, Pixie::Window* window);

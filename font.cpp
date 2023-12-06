@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "font.h"
 #include "pixie.h"
+#include "fontbmp.h"
 #if !PIXIE_PLATFORM_WIN
 #include <string.h>
 #endif
@@ -50,6 +51,107 @@ bool Font::Load(const char* filename, int characterSizeX, int characterSizeY)
     FILE* infile = fopen(filename, "rb");
     if (!infile)
         return false;
+
+    BITMAPFILEHEADER bmfh;
+    fread(&bmfh, sizeof(bmfh), 1, infile);
+    if (bmfh.bfType != 0x4d42) // 'MB'
+    {
+        fclose(infile);
+        return false;
+    }
+
+    BITMAPINFOHEADER bmih;
+    fread(&bmih, sizeof(bmih), 1, infile);
+    if (bmih.biSize != sizeof(bmih))
+    {
+        fclose(infile);
+        return false;
+    }
+
+    if ((bmih.biBitCount != 32 && bmih.biBitCount != 24) || bmih.biCompression != BI_RGB)
+    {
+        fclose(infile);
+        return false;
+    }
+
+    fseek(infile, bmfh.bfOffBits, SEEK_SET);
+
+    m_width = bmih.biWidth;
+    m_height = abs(bmih.biHeight);
+
+    uint32_t size = 256 * m_characterSizeX * m_characterSizeY;
+    m_fontBuffer = new uint32_t[size];
+
+    if (bmih.biBitCount == 32)
+    {
+        fread(m_fontBuffer, 1, size * 4, infile);
+    }
+    else if (bmih.biBitCount == 24)
+    {
+        // read into 24bit buf and expand
+        uint8_t* buf24 = new uint8_t[size * 3];
+        fread(buf24, 1, size * 3, infile);
+
+        uint8_t* pcurr = buf24;
+        for (uint32_t i = 0; i < size; ++i)
+        {
+            // from: R,G,B
+            // to:   xRGB
+            m_fontBuffer[i] =
+                0xff000000 |
+                (*(pcurr) << 16) |
+                (*(pcurr + 1) << 8) |
+                (*(pcurr + 2));
+
+            pcurr += 3;
+        }
+
+        delete[] buf24;
+    }
+
+    // if we don't have a negative height, the bmp is stored upside-down, so go through and flip it
+    if (bmih.biHeight > 0)
+    {
+        uint32_t* rowbuf = new uint32_t[m_width];
+        // flip all rows apart from the middle one if the image has an odd height
+        // h = 4; h/2 = 2; y 0,fy 3 | y 1,fy 2
+        // h = 5; h/2 = 2; y 0,fy 4 | y 1,fy 3  [row 2 unchanged]
+        for (uint32_t y = 0; y < m_height / 2; ++y)
+        {
+            uint32_t flipy = (m_height - (y + 1));
+
+            void* row = m_fontBuffer + (m_width * y);
+            void* fliprow = m_fontBuffer + (m_width * flipy);
+            uint32_t rowsize = m_width * sizeof(uint32_t);
+
+            // 1. copy fliprow into rowbuf
+            memcpy(rowbuf, fliprow, rowsize);
+
+            // 2. copy row into fliprow
+            memcpy(fliprow, row, rowsize);
+
+            // 3. copy rowbuf into row
+            memcpy(row, rowbuf, rowsize);
+        }
+
+        delete[] rowbuf;
+    }
+
+    fclose(infile);
+
+    return true;
+}
+
+bool Font::LoadDefaultFont()
+{
+    m_characterSizeX = 9;
+    m_characterSizeY = 16;
+
+    FILE* infile = tmpfile();
+    if (!infile)
+        return false;
+    fwrite(font_bmp, sizeof(char), font_bmp_len, infile);
+    rewind(infile);
 
     BITMAPFILEHEADER bmfh;
     fread(&bmfh, sizeof(bmfh), 1, infile);

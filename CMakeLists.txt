@@ -4,10 +4,7 @@ project(pixie)
 
 set(
   PIXIE_INCLUDES
-  ${PROJECT_SOURCE_DIR}/core.h
-  ${PROJECT_SOURCE_DIR}/font.h
-  ${PROJECT_SOURCE_DIR}/imgui.h
-  ${PROJECT_SOURCE_DIR}/pixie.h)
+  ${PROJECT_SOURCE_DIR})
 
 include_directories(
   ${PROJECT_SOURCE_DIR}

@@ -1,6 +1,7 @@
 ﻿#include "pixie.h"
 #include "font.h"
 #include "imgui.h"
+#include "buffer.h"
 #include "pixie_config.h"
 #include <string.h>
 #include <stdio.h>
@@ -28,6 +29,7 @@ static void draw(int x, int y, uint32_t* pixels)
 int main(int argc, char** argv)
 {
     Pixie::Font font;
+    // font.LoadDefaultFont();
     if (!font.Load(FONT_BMP_PATH, 9, 16))
     {
 #if PIXIE_PLATFORM_WIN
@@ -43,6 +45,16 @@ int main(int argc, char** argv)
         return 0;
 
     uint32_t* pixels = window.GetPixels();
+
+    // Buffer framebuffer(pixels, window.GetWidth(), window.GetHeight());
+    // while (!window.HasKeyGoneUp(Pixie::Key_Escape)) {
+    //     framebuffer.clear();
+    //     framebuffer.setPixel(100, 100, 255, 255, 0);
+    //     framebuffer.setPixel(101, 100, 255, 0, 255);
+    //     framebuffer.setPixel(100, 101, 255, 0, 0);
+    //     framebuffer.setPixel(101, 101, 255, 0, 0);
+    //     if (!window.Update()) break;
+    // }
 
     const float SPEED = 100.0f;
     float x = 0, y = 0;
