@@ -20,6 +20,8 @@ namespace Pixie
             static void Input(char* text, int textBufferLength, int x, int y, int width, int height);
             static bool Checkbox(const char* label, bool checked, int x, int y);
             static bool RadioButton(const char* label, bool checked, int x, int y);
+            static void SliderFloat(float &value, float min, float max, int x, int y, int width, int height);
+            static void SliderInt(int &value, int min, int max, int x, int y, int width, int height);
 
             // Basic drawing
             static void Rect(int x, int y, int width, int height, uint32_t borderColour);

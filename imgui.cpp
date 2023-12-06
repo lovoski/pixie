@@ -63,6 +63,59 @@ void ImGui::End()
     s_state.window = 0;
 }
 
+void ImGui::SliderFloat(float &value, float min, float max, int x, int y, int width, int height)
+{
+    assert(s_state.HasStarted());
+    Window *window = s_state.window;
+    int id = s_state.GetNextId();
+
+    const uint32_t NormalColour = MAKE_RGB(32, 50, 77);
+    const uint32_t HoverColour = MAKE_RGB(39, 73, 114);
+    const uint32_t BorderColour = MAKE_RGB(68, 79, 103);
+
+    int mouseX = window->GetMouseX();
+    int mouseY = window->GetMouseY();
+    bool hover = mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
+
+    FilledRect(x, y, width, height, hover?HoverColour:NormalColour, BorderColour);
+    if (hover) {
+        s_state.hoverId = id;
+        if (window->IsMouseDown(Pixie::MouseButton_Left))
+            value = (max-min)*(float)((mouseX-x))/(float)(width);
+    }
+    FilledRect(x+static_cast<int>(width*value/(max-min))-5, y, 10, height, MAKE_RGB(255,255,255), MAKE_RGB(255,255,255));
+    char labelText[10];
+    sprintf(labelText, "%.2f", value);
+    Label(labelText, x+width+10, y+height/2-s_state.font->GetCharacterHeight()/2, s_state.defaultTextColour);
+}
+
+void ImGui::SliderInt(int &value, int min, int max, int x, int y, int width, int height)
+{
+    assert(s_state.HasStarted());
+    Window *window = s_state.window;
+    int id = s_state.GetNextId();
+
+    const uint32_t NormalColour = MAKE_RGB(32, 50, 77);
+    const uint32_t HoverColour = MAKE_RGB(39, 73, 114);
+    const uint32_t BorderColour = MAKE_RGB(68, 79, 103);
+
+    int mouseX = window->GetMouseX();
+    int mouseY = window->GetMouseY();
+    bool hover = mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
+
+    FilledRect(x, y, width, height, hover?HoverColour:NormalColour, BorderColour);
+    int stepSize = static_cast<int>(width/(float)(max-min));
+    if (hover) {
+        s_state.hoverId = id;
+        if (window->IsMouseDown(Pixie::MouseButton_Left))
+            value = static_cast<int>((max-min)*((float)(mouseX-x))/width);
+    }
+    FilledRect(x+stepSize*value-5, y, 10, height, MAKE_RGB(255,255,255), MAKE_RGB(255,255,255));
+    char labelText[10];
+    sprintf(labelText, "%d", value);
+    Label(labelText, x+width+10, y+height/2-s_state.font->GetCharacterHeight()/2, s_state.defaultTextColour);
+}
+
 void ImGui::Label(const char* text, int x, int y, uint32_t colour)
 {
     assert(text);
