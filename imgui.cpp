@@ -63,6 +63,13 @@ void ImGui::End()
     s_state.window = 0;
 }
 
+template<typename T>
+void clamp(T min, T max, T &value)
+{
+    if (value <= min) value = min;
+    if (value >= max) value = max;
+}
+
 void ImGui::SliderFloat(float &value, float min, float max, int x, int y, int width, int height)
 {
     assert(s_state.HasStarted());
@@ -75,17 +82,19 @@ void ImGui::SliderFloat(float &value, float min, float max, int x, int y, int wi
 
     int mouseX = window->GetMouseX();
     int mouseY = window->GetMouseY();
-    bool hover = mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
+    bool hover = mouseX >= x-5 && mouseX <= x + width+5 && mouseY >= y && mouseY <= y + height;
 
     FilledRect(x, y, width, height, hover?HoverColour:NormalColour, BorderColour);
     if (hover) {
         s_state.hoverId = id;
-        if (window->IsMouseDown(Pixie::MouseButton_Left))
+        if (window->IsMouseDown(Pixie::MouseButton_Left)) {
             value = (max-min)*(float)((mouseX-x))/(float)(width);
+            clamp<float>(min, max, value);
+        }
     }
     FilledRect(x+static_cast<int>(width*value/(max-min))-5, y, 10, height, MAKE_RGB(255,255,255), MAKE_RGB(255,255,255));
     char labelText[10];
-    sprintf(labelText, "%.2f", value);
+    sprintf(labelText, "%.2f\0", value);
     Label(labelText, x+width+10, y+height/2-s_state.font->GetCharacterHeight()/2, s_state.defaultTextColour);
 }
 
@@ -101,18 +110,20 @@ void ImGui::SliderInt(int &value, int min, int max, int x, int y, int width, int
 
     int mouseX = window->GetMouseX();
     int mouseY = window->GetMouseY();
-    bool hover = mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
+    bool hover = mouseX >= x-5 && mouseX <= x + width+5 && mouseY >= y && mouseY <= y + height;
 
     FilledRect(x, y, width, height, hover?HoverColour:NormalColour, BorderColour);
     int stepSize = static_cast<int>(width/(float)(max-min));
     if (hover) {
         s_state.hoverId = id;
-        if (window->IsMouseDown(Pixie::MouseButton_Left))
+        if (window->IsMouseDown(Pixie::MouseButton_Left)) {
             value = static_cast<int>((max-min)*((float)(mouseX-x))/width);
+            clamp<int>(min, max, value);
+        }
     }
     FilledRect(x+stepSize*value-5, y, 10, height, MAKE_RGB(255,255,255), MAKE_RGB(255,255,255));
     char labelText[10];
-    sprintf(labelText, "%d", value);
+    sprintf(labelText, "%d\0", value);
     Label(labelText, x+width+10, y+height/2-s_state.font->GetCharacterHeight()/2, s_state.defaultTextColour);
 }
 
