@@ -30,6 +30,6 @@ option(BUILD_PIXIE_DEMO "Build demo for pixie window." ON)
 add_library(${PROJECT_NAME} ${COMMON_SRC_FILES} ${PLATFORM_SRC_FILES})
 
 if (${BUILD_PIXIE_DEMO})
-  add_executable(pixie_test ${PROJECT_SOURCE_DIR}/main.cpp)
-  target_link_libraries(pixie_test PRIVATE ${PROJECT_NAME})
+  add_executable(pixie_demo ${PROJECT_SOURCE_DIR}/main.cpp)
+  target_link_libraries(pixie_demo PRIVATE ${PROJECT_NAME})
 endif()

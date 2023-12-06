@@ -7,8 +7,6 @@ Pixie is a minimal, cross-platform pixel framebuffer library for Windows and mac
 
 ### Quick Start
 
-A new build system based on CMake has been introduced.
-
 To use the library, simply write:
 
 ```cmake
@@ -19,16 +17,6 @@ add_subdirectory(YOUR_PATH_TO_PIXIE_FOLDER)
 
 target_link_libraries(YOUR_PROJECT_NAME PRIVATE pixie)
 ```
-
-By default, a test program will be built for pixie as demonstrated above.
-
-Copy the following files into your project:
-
-    pixie.cpp
-    pixie.h
-    core.h
-    Windows: pixie_win.cpp
-    macOS: pixie_osx.cpp
 
 To use Pixie:
 
@@ -59,12 +47,11 @@ from BGR to RGB.
 
 ### Examples
 
-Pixie has an example program in `main.cpp`. It can be compiled for Windows with the
-Visual Studio 2017 project, or for macOS with `makefile_osx` as follows:
+Pixie has an example program in `main.cpp`. It can be compiled with cmake.
 
-    make -f makefile_osx
+The building process will generate an executable `pixie_demo`.
 
-This will generate an executable `pixie_demo`.
+To disable the demo executable, set the variable `BUILD_PIXIE_DEMO` to OFF in cmake cache.
 
 On macOS Pixie requires the `CoreGraphics` and `AppKit` frameworks.
 
@@ -91,13 +78,7 @@ Pixie has a basic ImGui with support for:
 * Radio boxes
 * Drawing rectangles and filled rectangles
 
-To use the ImGui, add the following files to your project:
-
-    imgui.cpp
-    imgui.h
-    font.h
-
-and ensure that `font.bmp` is in your working directory.
+The ImGui is integrated into cmake library `pixie` by default.
 
 To load the font:
 
@@ -108,6 +89,14 @@ const int FontHeight = 16;
 if (!font.Load("font.bmp", FontWidth, FontHeight))
     return 0;
 ```
+Another approach is to load the hard coded default font with:
+
+```cpp
+Pixie::Font font;
+font.LoadDefaultFont();
+```
+
+The hrad coded default font file : `fontbmp.h`
 
 In your main loop:
 
