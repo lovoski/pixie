@@ -1,10 +1,6 @@
 Pixie
 =====
 
-![msbuild](https://github.com/samizzo/pixie/actions/workflows/msbuild.yml/badge.svg)
-![mingw](https://github.com/samizzo/pixie/actions/workflows/mingw.yml/badge.svg)
-![macOS](https://github.com/samizzo/pixie/actions/workflows/macos.yml/badge.svg)
-
 Pixie is a minimal, cross-platform pixel framebuffer library for Windows and macOS.
 
 ![example.gif](/example.gif)
@@ -13,7 +9,7 @@ Pixie is a minimal, cross-platform pixel framebuffer library for Windows and mac
 
 A new build system based on CMake has been introduced.
 
-To include the integrate the project to your own, simply write:
+To use the library, simply write:
 
 ```cmake
 add_subdirectory(YOUR_PATH_TO_PIXIE_FOLDER)
@@ -24,7 +20,7 @@ add_subdirectory(YOUR_PATH_TO_PIXIE_FOLDER)
 target_link_libraries(YOUR_PROJECT_NAME PRIVATE pixie)
 ```
 
-By default, a test program will be built for pixie, the test program is as demonstrated in the former gif.
+By default, a test program will be built for pixie as demonstrated above.
 
 Copy the following files into your project:
 
