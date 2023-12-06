@@ -11,6 +11,21 @@ Pixie is a minimal, cross-platform pixel framebuffer library for Windows and mac
 
 ### Quick Start
 
+A new build system based on CMake has been introduced.
+
+To include the integrate the project to your own, simply write:
+
+```cmake
+add_subdirectory(YOUR_PATH_TO_PIXIE_FOLDER)
+
+# If there's a header file problem
+# include_directories(YOUR_PATH_TO_PIXIE_FOLDER)
+
+target_link_libraries(YOUR_PROJECT_NAME PRIVATE pixie)
+```
+
+By default, a test program will be built for pixie, the test program is as demonstrated in the former gif.
+
 Copy the following files into your project:
 
     pixie.cpp

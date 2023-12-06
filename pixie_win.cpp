@@ -1,5 +1,4 @@
 #include "pixie.h"
-#include "Windows.h"
 #include <assert.h>
 #include <stdlib.h>
 
