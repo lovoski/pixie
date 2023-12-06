@@ -1,6 +1,7 @@
 ﻿#include "pixie.h"
 #include "font.h"
 #include "imgui.h"
+#include "pixie_config.h"
 #include <string.h>
 #include <stdio.h>
 #include <algorithm>
@@ -27,7 +28,7 @@ static void draw(int x, int y, uint32_t* pixels)
 int main(int argc, char** argv)
 {
     Pixie::Font font;
-    if (!font.Load("font.bmp", 9, 16))
+    if (!font.Load(FONT_BMP_PATH, 9, 16))
     {
 #if PIXIE_PLATFORM_WIN
         MessageBox(NULL, TEXT("Failed to load font.bmp"), TEXT("Pixie Error"), MB_ICONERROR);
@@ -38,7 +39,7 @@ int main(int argc, char** argv)
     }
 
     Pixie::Window window;
-    if (!window.Open(WindowTitle, WindowWidth, WindowHeight, true))
+    if (!window.Open(WindowTitle, WindowWidth, WindowHeight))
         return 0;
 
     uint32_t* pixels = window.GetPixels();
@@ -104,6 +105,10 @@ int main(int argc, char** argv)
         draw((int)x, (int)y, pixels);
 
         Pixie::ImGui::FilledRect(10, 240, 100, 100, MAKE_RGB(255, 0, 0), MAKE_RGB(128, 0, 0));
+
+        char mousePosStr[20];
+        sprintf(mousePosStr, "x=%d, y=%d", window.GetMouseX(), window.GetMouseY());
+        Pixie::ImGui::Label(mousePosStr, 100, 70, MAKE_RGB(255,255,255));
 
         if (Pixie::ImGui::Button("Hello", 100, 100, 100, 30))
             strcpy_s(buf, sizeof(buf), "Hello, World!");

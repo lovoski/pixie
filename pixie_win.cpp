@@ -1,4 +1,5 @@
 #include "pixie.h"
+#include "Windows.h"
 #include <assert.h>
 #include <stdlib.h>
 
@@ -59,6 +60,8 @@ void Window::PlatformInit()
 bool Window::PlatformOpen(const TCHAR* title, int width, int height)
 {
     HINSTANCE hInstance = GetModuleHandle(0);
+    // Introduce DPI awareness settings
+    SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
 
     WNDCLASS wc;
     wc.style = 0;
@@ -118,6 +121,8 @@ bool Window::PlatformOpen(const TCHAR* title, int width, int height)
     if (window == 0)
         return false;
 
+    // disable window scaling by default
+    SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_UNAWARE);
     SetWindowLongPtr(window, GWLP_USERDATA, (LONG_PTR)this);
     ShowWindow(window, SW_SHOW);
 
@@ -133,8 +138,12 @@ bool Window::PlatformUpdate()
     POINT p;
     GetCursorPos(&p);
     ScreenToClient((HWND)m_window, &p);
-    m_mouseX = p.x;
-    m_mouseY = p.y;
+
+    // Apply dpi scaling as context is set to dpi-unaware
+    UINT dpi = GetDpiForWindow((HWND)m_window);
+    float dpi_scale = dpi / 96.0f;
+    m_mouseX = static_cast<int>(p.x*dpi_scale);
+    m_mouseY = static_cast<int>(p.y*dpi_scale);
 
     if (m_fullscreen)
     {
