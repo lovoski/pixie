@@ -2,10 +2,6 @@ cmake_minimum_required(VERSION 3.20)
 
 project(pixie)
 
-set(
-  PIXIE_INCLUDES
-  ${PROJECT_SOURCE_DIR})
-
 include_directories(
   ${PROJECT_SOURCE_DIR}
   ${PROJECT_BINARY_DIR})
